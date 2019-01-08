@@ -9,6 +9,8 @@ import {
   DetailHeader,
   ListGroup,
   TutorDetailHeader,
+  RequestListItem,
+  SectionListPage,
 } from 'tuteria-shared/lib/shared/reusables';
 import { DialogButton } from 'tuteria-shared/lib/shared/primitives';
 import { Select } from './PVerificationDetailPage';
@@ -36,6 +38,7 @@ const RemarkForm = ({ onSubmit }) => (
 
 export class RequestDetailPage extends Component {
   state = {
+    status: 'To be booked',
     data: {
       request: {
         first_name: 'Tioluwani',
@@ -110,6 +113,26 @@ export class RequestDetailPage extends Component {
       ],
     },
   };
+  onStatusChange = e => {
+    this.setState({
+      status: e.target.value,
+    });
+  };
+  filteredResults = () => {
+    return [
+      {
+        slug: 'ABCDESDDESS',
+        full_name: 'Shola Ameobi',
+        email: 'james@example.com',
+        phone_no: '08033002232',
+        skill: 'IELTS',
+        tutor: 'Chidiebere',
+        status: 'pending',
+        created: '2018-10-12 14:10:33',
+        modified: '2018-10-12 14:10:33',
+      },
+    ];
+  };
   render() {
     const { request, location, tutors } = this.state.data;
     return (
@@ -135,7 +158,7 @@ export class RequestDetailPage extends Component {
           <DetailItem label="Number of hours">{request.no_of_hours}</DetailItem>
         </div>
         <div>
-          <ListGroup name="Lesson Detail" />
+          <ListGroup name="Lesson detail" />
           <DetailItem label="Number of students">
             {request.no_of_students}
           </DetailItem>
@@ -157,7 +180,7 @@ export class RequestDetailPage extends Component {
           </DetailItem>
         </div>
         <div>
-          <ListGroup name="Schedule Detail" />
+          <ListGroup name="Schedule detail" />
           <DetailItem label="Number of hours">{request.no_of_hours}</DetailItem>
           <DetailItem label="Number of days">{request.days.length}</DetailItem>
           <DetailItem label="Selected days">
@@ -204,7 +227,7 @@ export class RequestDetailPage extends Component {
           ))}
         </div>
         <div>
-          <Flex justifyContent="space-between" alignItems="center">
+          <Flex alignItems="center">
             <DialogButton
               hideFooter={true}
               heading="Add remark"
@@ -212,23 +235,30 @@ export class RequestDetailPage extends Component {
             >
               Give remark
             </DialogButton>
-            <Button>Send profile to client</Button>
+            <Button ml={3}>Send profile to client</Button>
           </Flex>
         </div>
-        <Box my={3}>
+        <Box mt={3}>
           <ListGroup name="Update request status" />
-          <Flex>
-            <Box
-              css={css`
-                flex: 1;
-              `}
-            >
-              <Select options={options} />
-            </Box>
-            <Box>
-              <Button>Update</Button>
-            </Box>
-          </Flex>
+          <Select
+            options={options}
+            value={this.state.status}
+            onChange={this.onStatusChange}
+          />
+        </Box>
+        <div>
+          {this.state.status.toLowerCase() === 'to be booked' && (
+            <Button>Create Booking</Button>
+          )}
+          {this.state.status.toLowerCase() === 'cold' && (
+            <Button>Add to mailing list</Button>
+          )}
+        </div>
+        <Box my={3}>
+          <ListGroup name="Previous request by client" />
+          {this.filteredResults().map(data => (
+            <RequestListItem {...data} />
+          ))}
         </Box>
       </>
     );
