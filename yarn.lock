@@ -2320,7 +2320,14 @@ babel-plugin-macros@2.4.2:
     cosmiconfig "^5.0.5"
     resolve "^1.8.1"
 
-babel-plugin-macros@^2.0.0, babel-plugin-macros@^2.4.2:
+babel-plugin-macros@^2.0.0:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/babel-plugin-macros/-/babel-plugin-macros-2.4.5.tgz#7000a9b1f72d19ceee19a5804f1d23d6daf38c13"
+  dependencies:
+    cosmiconfig "^5.0.5"
+    resolve "^1.8.1"
+
+babel-plugin-macros@^2.4.2:
   version "2.4.4"
   resolved "https://registry.yarnpkg.com/babel-plugin-macros/-/babel-plugin-macros-2.4.4.tgz#d7bb55ba6473094ac0e1087fbceb062ebfd2337f"
   dependencies:
@@ -10047,7 +10054,7 @@ tunnel-agent@^0.6.0:
 
 tuteria-shared@gbozee/Shared-Admin-Lib:
   version "1.0.5"
-  resolved "https://codeload.github.com/gbozee/Shared-Admin-Lib/tar.gz/5eccad42cae44d10ee7ad4b99398f9c8de845620"
+  resolved "https://codeload.github.com/gbozee/Shared-Admin-Lib/tar.gz/c61748d025100245ac15e2555b9c61f9beacad5c"
   dependencies:
     "@babel/cli" "^7.2.0"
     "@babel/core" "^7.2.2"

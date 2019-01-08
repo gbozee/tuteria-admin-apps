@@ -5,6 +5,8 @@ import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 import LoginPage from 'tuteria-shared/lib/shared/LoginPage';
 import SListPage from '../pages/SListPage';
+import CSListPage from '../pages/CSListPage';
+import CSDetailPage from '../pages/CSDetailPage';
 import { MemoryRouter as Router, Route, Switch } from 'react-router';
 import { testData, testDataTransactions } from '../adapters/test_data';
 import devAdapter from '../adapters/dev';
@@ -31,9 +33,8 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
     </WithRouter>
   );
 };
-storiesOf('Sales and Customer Success Application', module).add(
-  'SListPage',
-  () => (
+storiesOf('Sales and Customer Success Application', module)
+  .add('SListPage', () => (
     <RouterWrapper>
       <Route
         path="/requests"
@@ -48,13 +49,33 @@ storiesOf('Sales and Customer Success Application', module).add(
         }}
       />
     </RouterWrapper>
-  )
-).add('SDetailPage', () => (
+  ))
+  .add('SDetailPage', () => (
     <RouterWrapper>
       <Route
         // path="/requests/112/transactions"
         render={props => {
           return <RequestDetailPage {...props} />;
+        }}
+      />
+    </RouterWrapper>
+  ))
+  .add('CSListPage', () => (
+    <RouterWrapper>
+      <Route
+        // path="/requests/112/transactions"
+        render={props => {
+          return <CSListPage {...props} />;
+        }}
+      />
+    </RouterWrapper>
+  ))
+  .add('CSDetailPage', () => (
+    <RouterWrapper>
+      <Route
+        // path="/requests/112/transactions"
+        render={props => {
+          return <CSDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
