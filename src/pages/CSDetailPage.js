@@ -228,7 +228,9 @@ export default class CSDetailPage extends Component {
         <Box my={3}>
           <ListGroup name="Actions" />
           <Flex my={3}>
-            <Button onClick={this.payTutor} mr={3}>Pay Tutor</Button>
+            <Button onClick={this.payTutor} mr={3}>
+              Pay Tutor
+            </Button>
             <Button onClick={this.rebook}>Rebook</Button>
           </Flex>
         </Box>
@@ -237,6 +239,7 @@ export default class CSDetailPage extends Component {
           {transactions.map((transaction, index) => {
             return (
               <ListItem
+                onClick={() => {}}
                 key={transaction.order}
                 onClick={() => {}}
                 heading={transaction.amount}

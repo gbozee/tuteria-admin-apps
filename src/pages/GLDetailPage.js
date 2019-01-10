@@ -71,6 +71,7 @@ export default class GLDetailPage extends Component {
   };
   completePartPaymentSessions = () => {};
   concludeBooking = () => {};
+  notifyOnPayment = () => {};
   render() {
     const {
       start_date,
@@ -115,7 +116,7 @@ export default class GLDetailPage extends Component {
               <Button mr={3}>Part Payment</Button>
             </>
           )}
-          <Button>Notify client and tutor on payment</Button>
+          <Button onClick={this.notifyOnPayment}>Notify client and tutor on payment</Button>
         </Flex>
         <Box my={3}>
           <ListGroup name="Booking Sessions" />
