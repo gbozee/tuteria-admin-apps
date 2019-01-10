@@ -7,6 +7,7 @@ import LoginPage from 'tuteria-shared/lib/shared/LoginPage';
 import SListPage from '../pages/SListPage';
 import CSListPage from '../pages/CSListPage';
 import CSDetailPage from '../pages/CSDetailPage';
+import GLDetailPage from '../pages/GLDetailPage';
 import { MemoryRouter as Router, Route, Switch } from 'react-router';
 import { testData, testDataTransactions } from '../adapters/test_data';
 import devAdapter from '../adapters/dev';
@@ -22,7 +23,13 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
       test={test}
       RouterComponent={Router}
       routerProps={{
-        initialEntries: ['/requests'],
+        initialEntries: [
+          '/requests',
+          '/requests/1228/transactions',
+          '/request-bookings',
+          '/request-bookings/123',
+          '/group-lessons'
+        ],
         initialIndex,
       }}
       adapter={devAdapter}
@@ -51,9 +58,9 @@ storiesOf('Sales and Customer Success Application', module)
     </RouterWrapper>
   ))
   .add('SDetailPage', () => (
-    <RouterWrapper>
+    <RouterWrapper initialIndex={1}>
       <Route
-        // path="/requests/112/transactions"
+        path="/requests/1228/transactions"
         render={props => {
           return <RequestDetailPage {...props} />;
         }}
@@ -61,9 +68,9 @@ storiesOf('Sales and Customer Success Application', module)
     </RouterWrapper>
   ))
   .add('CSListPage', () => (
-    <RouterWrapper>
+    <RouterWrapper initialIndex={2}>
       <Route
-        // path="/requests/112/transactions"
+        path="/request-bookings"
         render={props => {
           return <CSListPage {...props} />;
         }}
@@ -71,11 +78,21 @@ storiesOf('Sales and Customer Success Application', module)
     </RouterWrapper>
   ))
   .add('CSDetailPage', () => (
-    <RouterWrapper>
+    <RouterWrapper initialIndex={3}>
       <Route
-        // path="/requests/112/transactions"
+        path="/request-bookings/123"
         render={props => {
           return <CSDetailPage {...props} />;
+        }}
+      />
+    </RouterWrapper>
+  ))
+  .add('GLDetailPage', () => (
+    <RouterWrapper initialIndex={4}>
+      <Route
+        path="/group-lessons"
+        render={props => {
+          return <GLDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
