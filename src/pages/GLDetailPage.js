@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { Flex, Box, Text } from '@rebass/emotion';
 import { DetailHeader, DetailItem, ListGroup } from './reusables';
 import { Button } from 'tuteria-shared/lib/shared/primitives';
-import { SessionListItem, getDate } from 'tuteria-shared/lib/shared/reusables';
+import { SessionListItem, ListItem, getDate } from 'tuteria-shared/lib/shared/reusables';
 
 function getLocaleDateString(date) {
   const options = { month: 'short', day: 'numeric' };
@@ -55,6 +55,31 @@ export default class GLDetailPage extends Component {
             'Lorem Khaled Ipsum is a major key to success. Let me be clear, you have to make it through the jungle to make it to paradise, that’s the key.',
         },
       ],
+      clients: [
+        {
+          full_name: 'Baba Tutor',
+          email: 'tutor.baba@gmail.com',
+          session: 8,
+          date: '2018-10-10 9:20:33',
+          paid: true,
+          payment_type: 'part payment',
+        },
+        {
+          full_name: 'Baba Tutor',
+          email: 'tutor.baba@gmail.com',
+          class_summary: 'January Standard Class',
+          session: 2,
+          paid: true,
+          payment_type: 'part payment',
+        },
+        {
+          full_name: 'Baba Tutor',
+          email: 'tutor.baba@gmail.com',
+          session: 3,
+          paid: true,
+          payment_type: 'complete payment',
+        },
+      ],
       slug: 'ABSCDEFG',
       budget: 35000,
       duration: '10am - 2pm',
@@ -85,6 +110,7 @@ export default class GLDetailPage extends Component {
       sessions,
       reviews,
       paid,
+      clients,
     } = this.state.data;
     let date_summary = `${getLocaleDateString(
       start_date
@@ -116,7 +142,9 @@ export default class GLDetailPage extends Component {
               <Button mr={3}>Part Payment</Button>
             </>
           )}
-          <Button onClick={this.notifyOnPayment}>Notify client and tutor on payment</Button>
+          <Button onClick={this.notifyOnPayment}>
+            Notify client and tutor on payment
+          </Button>
         </Flex>
         <Box my={3}>
           <ListGroup name="Booking Sessions" />
@@ -159,6 +187,22 @@ export default class GLDetailPage extends Component {
                 </Button>
               </Flex>
             </Flex>
+          ))}
+        </Box>
+        <Box my={3}>
+          <ListGroup name="Clients" />
+          {clients.map((client, i) => (
+            <ListItem
+              key={i}
+              heading={client.full_name}
+              subHeading={client.email}
+              rightSection={
+                <>
+                  <strong>Sessions:</strong> <span>{client.session}</span>
+                </>
+              }
+              rightTop={client.payment_type}
+            />
           ))}
         </Box>
         <Box my={3}>

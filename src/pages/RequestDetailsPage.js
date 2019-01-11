@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { css, jsx } from '@emotion/core';
 import { Text, Flex, Box, Button as RButton } from '@rebass/emotion';
-import { Button } from 'tuteria-shared/lib/shared/primitives';
+import { Button, DialogButton } from 'tuteria-shared/lib/shared/primitives';
 import { Input } from 'tuteria-shared/lib/shared/LoginPage';
 import {
   DetailItem,
@@ -11,14 +11,30 @@ import {
   TutorDetailHeader,
   RequestListItem,
   SectionListPage,
+  BookingDetailHeader,
+  getDate,
 } from 'tuteria-shared/lib/shared/reusables';
-import { DialogButton } from 'tuteria-shared/lib/shared/primitives';
 import { Select } from './PVerificationDetailPage';
 
 const options = [
   { label: 'To be booked', value: 'To be booked' },
   { label: 'Completed', value: 'Completed' },
   { label: 'Cold', value: 'Cold' },
+];
+
+const days = [
+  { label: 'Monday', value: 'Monday' },
+  { label: 'Tuesday', value: 'Tuesday' },
+  { label: 'Wednesday', value: 'Wednesday' },
+  { label: 'Thursday', value: 'Thursday' },
+  { label: 'Friday', value: 'Friday' },
+  { label: 'Saturday', value: 'Saturday' },
+  { label: 'Sunday', value: 'Sunday' },
+];
+
+const duration = [
+  { label: '10:00am - 2:00pm', value: '10:00am - 2:00pm' },
+  { label: '2:00pm - 4:00pm', value: '2:00pm - 4:00pm' },
 ];
 
 const RemarkForm = ({ onSubmit }) => (
@@ -36,20 +52,145 @@ const RemarkForm = ({ onSubmit }) => (
   </form>
 );
 
+class BookingForm extends Component {
+  state = {
+    fields: this.props.fields || {},
+  };
+  onChange = (field, callback) => e => {
+    let result = callback(e);
+    this.setState(({ fields }) => ({
+      fields: {
+        ...fields,
+        [field]: result,
+      },
+    }));
+  };
+  onSubmit = () => {
+    const { fields } = this.state;
+    this.props.onSubmit(fields);
+  };
+  render() {
+    const { fields, reviewOptions } = this.state;
+    return (
+      <form>
+        <Flex flexDirection="column" alignItems="flex-start">
+          <Flex
+            css={css`
+              width: 100%;
+            `}
+          >
+            <Box
+              css={css`
+                flex: 1;
+              `}
+              mr={3}
+            >
+              <Input
+                isValid
+                label="Start date"
+                placeholder="10/1/2019"
+                value={fields.start_date}
+                onChange={this.onChange('start_date', e => e.target.value)}
+              />
+            </Box>
+            <Box
+              css={css`
+                flex: 1;
+              `}
+            >
+              <Input
+                isValid
+                label="Start time"
+                placeholder="10:00am"
+                value={fields.start_time}
+                onChange={this.onChange('start_time', e => e.target.value)}
+              />
+            </Box>
+          </Flex>
+          <Flex
+            css={css`
+              width: 100%;
+            `}
+          >
+            <Box
+              css={css`
+                flex: 1;
+              `}
+              mr={3}
+            >
+              <Input
+                isValid
+                label="Duration"
+                value={fields.duration}
+                placeholder="Select lesson duration"
+                onChange={this.onChange('duration', e => e.target.value)}
+              />
+            </Box>
+            <Box
+              css={css`
+                flex: 1;
+              `}
+            >
+              <Select
+                options={days}
+                value={fields.days}
+                label="Days of week"
+                placeholder="Select lesson days"
+                onChange={this.onChange('days', e => e.target.value)}
+              />
+            </Box>
+          </Flex>
+          <Flex
+            css={css`
+              width: 100%;
+            `}
+          >
+            <Box
+              css={css`
+                flex: 1;
+              `}
+            >
+              <Input
+                isValid
+                label="Hours per day"
+                placeholder="2"
+                value={fields.hours}
+                onChange={this.onChange('hours', e => e.target.value)}
+              />
+            </Box>
+          </Flex>
+          <Button
+            css={css`
+              width: 100%;
+            `}
+            type="submit"
+            onClick={this.onSubmit}
+          >
+            Book Lessons
+          </Button>
+        </Flex>
+      </form>
+    );
+  }
+}
+
 export class RequestDetailPage extends Component {
   state = {
     status: 'To be booked',
     data: {
       request: {
-        first_name: 'Tioluwani',
-        last_name: 'Kolawole',
-        email: 'kolawole.tioluwani@gmail.com',
-        phone: '08078657912',
+        user: {
+          full_name: 'Tioluwani Kolawole',
+          email: 'kolawole.tioluwani@gmail.com',
+          phone: '08078657912',
+        },
         request_id: '23009',
         no_of_hours: 7,
         per_hour_rate: 2500,
         budget: 35000,
         slug: 'ABSCDEFG',
+        start_date: '2018-10-10 9:20:33',
+        start_time: '9:20:33',
         no_of_students: 3,
         curriculum: 'British',
         duration: '3pm - 5pm',
@@ -138,24 +279,32 @@ export class RequestDetailPage extends Component {
     return (
       <>
         <div>
-          <DetailHeader
-            heading={`N${request.budget}`}
-            subHeading={`Request ID: ${request.request_id}`}
+          {/* <BookingDetailHeader {...request} /> */}
+          <TutorDetailHeader
+            detail={[
+              request.user.email,
+              request.user.full_name,
+              request.user.phone,
+            ]}
           >
-            <Text pt={1}>Slug: {request.slug}</Text>
-          </DetailHeader>
-          <DetailItem label="Full Name">
-            {request.first_name} {request.last_name}
-          </DetailItem>
-          <DetailItem label="Email">{request.email}</DetailItem>
-          <DetailItem label="Phone">{request.phone}</DetailItem>
-          <DetailItem label="Address">{`${location.address} ${
-            location.vicinity
-          }, ${location.state}`}</DetailItem>
-          <DetailItem label="Per hour rate">
-            N{request.per_hour_rate}
-          </DetailItem>
-          <DetailItem label="Number of hours">{request.no_of_hours}</DetailItem>
+            <Flex flexDirection="column">
+              <Text pb={2}>
+                <strong>Slug:</strong> {request.slug}{' '}
+              </Text>
+              <Text pb={2}>
+                <strong>Request ID:</strong> {request.request_id}{' '}
+              </Text>
+              <Text pb={2}>
+                <strong>Budget:</strong> {request.budget}{' '}
+              </Text>
+              <Text pb={2}>
+                <strong>Per hour rate:</strong> {request.per_hour_rate}{' '}
+              </Text>
+              <Text>
+                <strong>Number of hours:</strong> {request.no_of_hours}{' '}
+              </Text>
+            </Flex>
+          </TutorDetailHeader>
         </div>
         <div>
           <ListGroup name="Lesson detail" />
@@ -240,15 +389,34 @@ export class RequestDetailPage extends Component {
         </div>
         <Box mt={3}>
           <ListGroup name="Update request status" />
-          <Select
-            options={options}
-            value={this.state.status}
-            onChange={this.onStatusChange}
-          />
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text>Status</Text>
+            <Select
+              options={options}
+              value={this.state.status}
+              onChange={this.onStatusChange}
+            />
+          </Flex>
         </Box>
         <div>
           {this.state.status.toLowerCase() === 'to be booked' && (
-            <Button>Create Booking</Button>
+            <DialogButton
+              hideFooter={true}
+              heading="Create Booking"
+              dialogText={
+                <BookingForm
+                  fields={{
+                    start_date: getDate(request.start_date),
+                    start_time: request.start_time,
+                    duration: request.duration,
+                    hours: request.no_of_hours,
+                  }}
+                />
+              }
+            >
+              Create booking
+            </DialogButton>
+            // <Button>Create Booking</Button>
           )}
           {this.state.status.toLowerCase() === 'cold' && (
             <Button>Add to mailing list</Button>
@@ -259,6 +427,17 @@ export class RequestDetailPage extends Component {
           {this.filteredResults().map(data => (
             <RequestListItem {...data} />
           ))}
+        </Box>
+        <Box>
+          <ListGroup name="Book lessons" />
+          <BookingForm
+            fields={{
+              start_date: getDate(request.start_date),
+              start_time: request.start_time,
+              duration: request.duration,
+              hours: request.no_of_hours,
+            }}
+          />
         </Box>
       </>
     );
