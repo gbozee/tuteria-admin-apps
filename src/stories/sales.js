@@ -8,6 +8,7 @@ import SListPage from '../pages/SListPage';
 import CSListPage from '../pages/CSListPage';
 import CSDetailPage from '../pages/CSDetailPage';
 import GLDetailPage from '../pages/GLDetailPage';
+import ClientListPage from '../pages/ClientListPage';
 import GLTutorBookingListPage from '../pages/GLTutorBookingListPage';
 import { MemoryRouter as Router, Route, Switch } from 'react-router';
 import { testData, testDataTransactions } from '../adapters/test_data';
@@ -31,6 +32,7 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
           '/request-bookings/123',
           '/group-lessons/clients/123',
           '/group-lessons',
+          '/group-lesson-clients'
         ],
         initialIndex,
       }}
@@ -105,6 +107,21 @@ storiesOf('Sales and Customer Success Application', module)
         path="/group-lessons"
         render={props => {
           return <GLTutorBookingListPage {...props} />;
+        }}
+      />
+    </RouterWrapper>
+  )).add('ClientListPage', () => (
+    <RouterWrapper initialIndex={6}>
+      <Route
+        path="/group-lesson-clients"
+        exact
+        render={props => {
+          return (
+            <ClientListPage
+              {...props}
+              detailPageUrl={order => `/group-lesson-client/${order}`}
+            />
+          );
         }}
       />
     </RouterWrapper>

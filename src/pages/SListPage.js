@@ -7,7 +7,7 @@ import { Link } from "react-router";
 import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
 import { RequestListItem, SectionListPage } from "./reusables";
 import React from "react";
-const RequestStatusSummary = ({
+export const RequestStatusSummary = ({
   label,
   amount = 0,
   no = 0,
