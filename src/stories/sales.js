@@ -8,6 +8,7 @@ import SListPage from '../pages/SListPage';
 import CSListPage from '../pages/CSListPage';
 import CSDetailPage from '../pages/CSDetailPage';
 import GLDetailPage from '../pages/GLDetailPage';
+import GLClientDetailPage from '../pages/GLClientDetailPage';
 import ClientListPage from '../pages/ClientListPage';
 import GLTutorBookingListPage from '../pages/GLTutorBookingListPage';
 import { MemoryRouter as Router, Route, Switch } from 'react-router';
@@ -32,7 +33,8 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
           '/request-bookings/123',
           '/group-lessons/clients/123',
           '/group-lessons',
-          '/group-lesson-clients'
+          '/group-lesson-clients',
+          '/group-lesson-client/123'
         ],
         initialIndex,
       }}
@@ -122,6 +124,16 @@ storiesOf('Sales and Customer Success Application', module)
               detailPageUrl={order => `/group-lesson-client/${order}`}
             />
           );
+        }}
+      />
+    </RouterWrapper>
+  ))
+  .add('ClientDetailPage', () => (
+    <RouterWrapper initialIndex={7}>
+      <Route
+        path="/group-lesson-client/123"
+        render={props => {
+          return <GLClientDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
