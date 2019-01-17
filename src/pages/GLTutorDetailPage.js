@@ -1,22 +1,17 @@
 /**@jsx jsx */
 import React, { Component } from 'react';
 import { css, jsx } from '@emotion/core';
-import { Flex, Box, Text, Button as EButton } from '@rebass/emotion';
-import { DetailHeader, DetailItem, ListGroup, ReviewForm } from './reusables';
-import { Button, DialogButton } from 'tuteria-shared/lib/shared/primitives';
-import {
-  SessionListItem,
-  ListItem,
-  getDate,
-} from 'tuteria-shared/lib/shared/reusables';
-import { TransactionList } from './WDetailPage';
+import { Flex, Box, Text } from '@rebass/emotion';
+import { DetailHeader, DetailItem, ListGroup } from './reusables';
+import { Button } from 'tuteria-shared/lib/shared/primitives';
+import { SessionListItem, ListItem, getDate } from 'tuteria-shared/lib/shared/reusables';
 
 function getLocaleDateString(date) {
   const options = { month: 'short', day: 'numeric' };
   return new Date(date).toLocaleDateString('en-GB', options);
 }
 
-export default class GLDetailPage extends Component {
+export default class GLTutorDetailPage extends Component {
   state = {
     data: {
       client: {
@@ -85,49 +80,6 @@ export default class GLDetailPage extends Component {
           payment_type: 'complete payment',
         },
       ],
-      transactions: [
-        {
-          amount: 'N2000',
-          status: 'WITHDRAWAL',
-          date: '2018-10-10 9:20:33',
-          order: 'AA102',
-          client_email: 'james@example.com',
-          tutor_email: 'Shola@example.com',
-          booking: {
-            order: 'BookinOrder',
-            status: 'COMPLETED',
-            start_time: '2018-10-10 9:20:33',
-            end_time: '2018-11-10 9:20:33',
-          },
-          made_payment: true,
-        },
-        {
-          amount: 'N12000',
-          date: '2018-10-10 9:20:33',
-          order: 'AA103',
-          client_email: 'james@example.com',
-          tutor_email: 'Shola@example.com',
-          booking: {
-            order: 'BookinOrder',
-            status: 'COMPLETED',
-            start_time: '2018-10-10 9:20:33',
-            end_time: '2018-11-10 9:20:33',
-          },
-          made_payment: true,
-        },
-        {
-          amount: 'N2000',
-          status: 'WITHDRAWAL',
-          date: '2018-10-10 9:20:33',
-          order: 'AA104',
-        },
-        {
-          amount: 'N2000',
-          status: 'BANK_CHARGE',
-          date: '2018-10-10 9:20:33',
-          order: 'AA105',
-        },
-      ],
       slug: 'ABSCDEFG',
       budget: 35000,
       duration: '10am - 2pm',
@@ -145,8 +97,6 @@ export default class GLDetailPage extends Component {
   completePartPaymentSessions = () => {};
   concludeBooking = () => {};
   notifyOnPayment = () => {};
-  payTutor = () => {};
-  submitReview = payload => {};
   render() {
     const {
       start_date,
@@ -161,14 +111,18 @@ export default class GLDetailPage extends Component {
       reviews,
       paid,
       clients,
-      transactions,
     } = this.state.data;
     let date_summary = `${getLocaleDateString(
       start_date
     )} - ${getLocaleDateString(end_date)}`;
     return (
       <>
-        <DetailHeader heading={`N${budget}`} subHeading={`Slug: ${slug}`} />
+        <div>
+          <DetailHeader heading={`N${budget}`} subHeading={`Slug: ${slug}`} />
+          <DetailItem label="Full Name">{client.full_name}</DetailItem>
+          <DetailItem label="Email">{client.email}</DetailItem>
+          <DetailItem label="Phone">{client.phone}</DetailItem>
+        </div>
         <Box my={3}>
           <ListGroup name="Request details" />
           <DetailItem label="Class">{type}</DetailItem>
@@ -176,11 +130,36 @@ export default class GLDetailPage extends Component {
           <DetailItem label="Date Summary">{date_summary}</DetailItem>
           <DetailItem label="Location">{location}</DetailItem>
         </Box>
+        <Flex
+          css={css`
+            border-top: 1px solid;
+          `}
+          pt={3}
+        >
+          {paid && (
+            <>
+              <Button mr={3}>Full Payment</Button>
+              <Button mr={3}>Part Payment</Button>
+            </>
+          )}
+          <Button onClick={this.notifyOnPayment}>
+            Notify client and tutor on payment
+          </Button>
+        </Flex>
         <Box my={3}>
           <ListGroup name="Booking Sessions" />
           {sessions.map((session, index) => {
             return <SessionListItem key={session.order} {...session} />;
           })}
+          <Button
+            css={css`
+              width: 100%;
+            `}
+            mt={3}
+            onClick={this.completePartPaymentSessions}
+          >
+            Complete Part Payment Sessions
+          </Button>
         </Box>
         <Box my={3}>
           <ListGroup name="Reviews" />
@@ -214,7 +193,6 @@ export default class GLDetailPage extends Component {
           <ListGroup name="Clients" />
           {clients.map((client, i) => (
             <ListItem
-              verified
               key={i}
               heading={client.full_name}
               subHeading={client.email}
@@ -224,33 +202,19 @@ export default class GLDetailPage extends Component {
                 </>
               }
               rightTop={client.payment_type}
-              rightBottom={
-                <Flex>
-                  <Button mr={2}>Complete Payment</Button>
-                  <DialogButton
-                    hideFooter={true}
-                    heading="Give Review"
-                    dialogText={<ReviewForm onSubmit={this.submitReview} />}
-                  >
-                    Give review
-                  </DialogButton>
-                </Flex>
-              }
             />
           ))}
         </Box>
-        <Flex my={3}>
-          <Button onClick={this.payTutor}>Pay tutor</Button>
-          <Button ml={3} onClick={this.concludeBooking}>
+        <Box my={3}>
+          <Button
+            css={css`
+              width: 100%;
+            `}
+            onClick={this.concludeBooking}
+          >
             Booking Concluded
           </Button>
-        </Flex>
-        <TransactionList
-          transactions={transactions}
-          //   goToTransactionDetail={this.goToTransactionDetail}
-          history={this.props.history}
-          location={this.props.location}
-        />
+        </Box>
       </>
     );
   }

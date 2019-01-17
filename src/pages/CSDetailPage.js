@@ -11,66 +11,67 @@ import {
   RatingComponent,
 } from 'tuteria-shared/lib/shared/reusables';
 import { Button } from 'tuteria-shared/lib/shared/primitives';
+import { ReviewForm } from './reusables';
 
-class ReviewForm extends Component {
-  state = {
-    fields: {
-      score: 1,
-      text: '',
-    },
-    reviewOptions: [1, 2, 3, 4, 5],
-  };
-  onChange = (field, callback) => e => {
-    let result = callback(e);
-    this.setState(({ fields }) => ({
-      fields: {
-        ...fields,
-        [field]: result,
-      },
-    }));
-  };
-  onSubmit = () => {
-    const { fields } = this.state;
-    this.props.onSubmit(fields);
-  };
-  render() {
-    const { fields, reviewOptions } = this.state;
-    return (
-      <form>
-        <Flex flexDirection="column" alignItems="flex-start">
-          <textarea
-            css={css`
-              width: 100%;
-              margin-top: 16px;
-              padding: 16px;
-              font-size: 16px;
-            `}
-            placeholder="Enter review here"
-            rows={10}
-            value={fields.text}
-            onChange={this.onChange('text', e => e.target.value)}
-          />
-          <select
-            value={fields.score}
-            onChange={this.onChange('score', e => e.target.value)}
-            css={css`
-              margin: 8px 0;
-            `}
-          >
-            {reviewOptions.map(option => (
-              <option key={option} value={option}>
-                {option} star
-              </option>
-            ))}
-          </select>
-          <Button type="submit" onClick={this.onSubmit}>
-            Submit Review
-          </Button>
-        </Flex>
-      </form>
-    );
-  }
-}
+// class ReviewForm extends Component {
+//   state = {
+//     fields: {
+//       score: 1,
+//       text: '',
+//     },
+//     reviewOptions: [1, 2, 3, 4, 5],
+//   };
+//   onChange = (field, callback) => e => {
+//     let result = callback(e);
+//     this.setState(({ fields }) => ({
+//       fields: {
+//         ...fields,
+//         [field]: result,
+//       },
+//     }));
+//   };
+//   onSubmit = () => {
+//     const { fields } = this.state;
+//     this.props.onSubmit(fields);
+//   };
+//   render() {
+//     const { fields, reviewOptions } = this.state;
+//     return (
+//       <form>
+//         <Flex flexDirection="column" alignItems="flex-start">
+//           <textarea
+//             css={css`
+//               width: 100%;
+//               margin-top: 16px;
+//               padding: 16px;
+//               font-size: 16px;
+//             `}
+//             placeholder="Enter review here"
+//             rows={10}
+//             value={fields.text}
+//             onChange={this.onChange('text', e => e.target.value)}
+//           />
+//           <select
+//             value={fields.score}
+//             onChange={this.onChange('score', e => e.target.value)}
+//             css={css`
+//               margin: 8px 0;
+//             `}
+//           >
+//             {reviewOptions.map(option => (
+//               <option key={option} value={option}>
+//                 {option} star
+//               </option>
+//             ))}
+//           </select>
+//           <Button type="submit" onClick={this.onSubmit}>
+//             Submit Review
+//           </Button>
+//         </Flex>
+//       </form>
+//     );
+//   }
+// }
 
 export default class CSDetailPage extends Component {
   state = {

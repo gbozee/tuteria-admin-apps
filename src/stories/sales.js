@@ -7,8 +7,9 @@ import LoginPage from 'tuteria-shared/lib/shared/LoginPage';
 import SListPage from '../pages/SListPage';
 import CSListPage from '../pages/CSListPage';
 import CSDetailPage from '../pages/CSDetailPage';
-import GLDetailPage from '../pages/GLDetailPage';
+import GLTutorDetailPage from '../pages/GLTutorDetailPage';
 import GLClientDetailPage from '../pages/GLClientDetailPage';
+import GLDetailPage from '../pages/GLDetailPage';
 import ClientListPage from '../pages/ClientListPage';
 import GLTutorBookingListPage from '../pages/GLTutorBookingListPage';
 import { MemoryRouter as Router, Route, Switch } from 'react-router';
@@ -31,10 +32,11 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
           '/requests/1228/transactions',
           '/request-bookings',
           '/request-bookings/123',
-          '/group-lessons/clients/123',
-          '/group-lessons',
+          '/group-lessons-tutors/123',
+          '/group-lesson-tutors',
           '/group-lesson-clients',
-          '/group-lesson-client/123'
+          '/group-lesson-clients/123',
+          '/group-lesson/123'
         ],
         initialIndex,
       }}
@@ -93,12 +95,12 @@ storiesOf('Sales and Customer Success Application', module)
       />
     </RouterWrapper>
   ))
-  .add('GLDetailPage', () => (
+  .add('GLTutorDetailPage', () => (
     <RouterWrapper initialIndex={4}>
       <Route
-        path="/group-lessons/clients/123"
+        path="/group-lessons-tutors/123"
         render={props => {
-          return <GLDetailPage {...props} />;
+          return <GLTutorDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
@@ -106,13 +108,13 @@ storiesOf('Sales and Customer Success Application', module)
   .add('GLTutorBookingListPage', () => (
     <RouterWrapper initialIndex={5}>
       <Route
-        path="/group-lessons"
+        path="/group-lesson-tutors"
         render={props => {
           return <GLTutorBookingListPage {...props} />;
         }}
       />
     </RouterWrapper>
-  )).add('ClientListPage', () => (
+  )).add('GLClientListPage', () => (
     <RouterWrapper initialIndex={6}>
       <Route
         path="/group-lesson-clients"
@@ -128,12 +130,22 @@ storiesOf('Sales and Customer Success Application', module)
       />
     </RouterWrapper>
   ))
-  .add('ClientDetailPage', () => (
+  .add('GLClientDetailPage', () => (
     <RouterWrapper initialIndex={7}>
       <Route
-        path="/group-lesson-client/123"
+        path="/group-lesson-clients/123"
         render={props => {
           return <GLClientDetailPage {...props} />;
+        }}
+      />
+    </RouterWrapper>
+  ))
+  .add('GLDetailPage', () => (
+    <RouterWrapper initialIndex={8}>
+      <Route
+        path="/group-lesson/123"
+        render={props => {
+          return <GLDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
