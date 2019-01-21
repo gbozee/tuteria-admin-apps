@@ -194,7 +194,6 @@ storiesOf("Sales and Customer Success Application", module)
             detailPageUrl={slug => `/bookings/${slug}`}
           />
         )}
-
       />
     </RouterWrapper>
   ));
