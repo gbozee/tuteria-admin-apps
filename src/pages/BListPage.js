@@ -155,13 +155,13 @@ class SalesListPage extends React.Component {
               data={this.filteredResults()}
               callback={request => ({
                 ...request,
-                onClick: () => {
-                  this.setState({
-                    displayModal: true,
-                    selectedBooking: request
-                  });
-                }
-                // to: this.props.detailPageUrl(request.order)
+                // onClick: () => {
+                //   this.setState({
+                //     displayModal: true,
+                //     selectedBooking: request
+                //   });
+                // }
+                to: this.props.detailPageUrl(request.order)
               })}
               LinkComponent={Flex}
               Component={BookingListItem}
