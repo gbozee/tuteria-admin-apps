@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core";
-import { Flex, Text, Heading, Image, Link } from "@rebass/emotion";
+import { Flex, Text, Heading, Image, Link as DLink } from "@rebass/emotion";
 import {
   DialogButton,
   Tabs,
@@ -11,66 +11,75 @@ import React from "react";
 import {
   ListGroup,
   ListItem,
-  DetailItem
+  DetailItem,
+  SectionListPage,
+  SubjectDetailView,
+  TutorDetailHeader,
+  VerificationItem
 } from "tuteria-shared/lib/shared/reusables";
+import { Link, Route, Switch, Redirect } from "react-router-dom";
 import { DataContext } from "tuteria-shared/lib/shared/DataContext";
 import { actions as cActions } from "../appContext";
 
-export const DetailHeader = ({
-  image = "https://via.placeholder.com/100",
-  detail,
-  children
-}) => {
-  return (
-    <Flex>
-      <Image src={image} height={100} />
-      <Flex
-        mb={4}
-        flexDirection="column"
-        css={css`
-          flex: 2;
-        `}
-      >
-        <Text mb={1}>{detail[0]}</Text>
-        <Heading fontSize={5}>{detail[1]}</Heading>
-        <Text mb={1}>{detail[2]}</Text>
-        <Text mb={1}>{detail[3]}</Text>
-      </Flex>
-      <Flex
-        flexDirection="column"
-        css={css`
-          align-self: center;
-        `}
-      >
-        {children}
-      </Flex>
-    </Flex>
+const SubjectListItemComponent = ({ name, to = "" }) => {
+  let stylings = `display: block;
+        border-bottom: 1px solid black;
+        padding-top: 15px;
+        padding-bottom: 15px;`;
+  return to ? (
+    <Link
+      to={to}
+      css={css`
+        cursor: pointer;
+        ${stylings}
+      `}
+    >
+      {name}
+    </Link>
+  ) : (
+    <Text
+      css={css`
+        ${stylings}
+      `}
+    >
+      {name}
+    </Text>
   );
 };
-const VerificationItem = ({ label, children, buttons = [] }) => {
-  return (
-    <Flex py={3} justifyContent="space-between">
-      <Flex flexDirection="column">
-        {label && (
-          <Text fontWeight="bold" pb={3}>
-            {label}
-          </Text>
-        )}
-        {children}
-      </Flex>
-      <Flex>
-        {buttons.map((button, index) => (
-          <DialogButton mr={index === 0 ? 3 : 0} {...button} />
-        ))}
-      </Flex>
-    </Flex>
-  );
-};
+
 const actions = {
   EMAIL_VERIFICATION: "email_verification",
   ID_VERIFICATION: "id_verification",
   PROFILE_VERIFICATION: "profile_verification"
 };
+class SubjectDetailSection extends React.Component {
+  options = [
+    { value: "active", text: "Mark as active" },
+    { value: "denied", text: "Deny Skill" },
+    { value: "modification", text: "Get tutor to modify skill" }
+  ];
+  render() {
+    let { skills, match } = this.props;
+    let skillInfo = skills.find(x => x.skill_name === match.params.skill);
+    return (
+      <SubjectDetailView
+        skill={skillInfo}
+        dialogText={data => {
+          if (data === "active")
+            return "Are you sure you want to set this subject as active?";
+          if (data === "denied")
+            return "Are you sure you want to deny this subject?";
+          return "Are you sure you want the tutor to modify this subject?";
+        }}
+        options={this.options.filter(x => x.value !== skillInfo.status)}
+        onRetakeTest={() => this.props.onRetakeTest(skillInfo, "freeze")}
+        onStatusChange={action =>
+          this.props.updateSubjectStatus(skillInfo, action)
+        }
+      />
+    );
+  }
+}
 export class TutorDetailPage extends React.Component {
   static contextType = DataContext;
 
@@ -80,7 +89,9 @@ export class TutorDetailPage extends React.Component {
     record: null,
     email_approval: false,
     id_verified: false,
-    profile_rejected: false
+    profile_rejected: false,
+    skills: [],
+    pending_verifications: []
   };
   componentDidMount() {
     let {
@@ -90,19 +101,31 @@ export class TutorDetailPage extends React.Component {
       history
     } = this.props;
     let { dispatch, actions } = this.context;
-    console.log({ email, slug });
     dispatch({
       type: actions.TUTOR_INFO,
       value: { email, slug }
     })
       .then(data => {
-        console.log({ data });
         this.setState(data);
       })
       .catch(error => {
         history.push("/tutor-list");
       });
+    dispatch({ type: actions.TUTOR_SKILLS, value: { email, slug } }).then(
+      data => {
+        this.setState({ skills: data });
+      }
+    );
+    this.getWorkingData();
   }
+  getWorkingData = () => {
+    let { dispatch, actions } = this.context;
+    return dispatch({ type: actions.FETCH_TUTOR_WORKING_DATA, value: {} }).then(
+      data => {
+        this.setState({ pending_verifications: data });
+      }
+    );
+  };
   denyTutor = () => {
     this.setState({ loading: true });
     return this.localDispatch(cActions.DENY_TUTOR).then(data => {
@@ -303,14 +326,42 @@ export class TutorDetailPage extends React.Component {
     } = this.props;
     return Boolean(email);
   };
+  skillIsFrozen() {
+    let { pending_verifications, data } = this.state;
+    return pending_verifications
+      .filter(x => x.actions.includes("froze_profile"))
+      .map(x => x.email)
+      .includes(data.email);
+  }
+  updateSubjectStatus = (skill, action) => {
+    let { dispatch, actions } = this.context;
+    dispatch({
+      type: actions.SKILL_ADMIN_ACTION,
+      value: {
+        skill,
+        email: this.state.data.email,
+        action,
+        full_name: this.state.data.full_name
+      }
+    }).then(skills => {
+      if (skill) {
+        this.setState({
+          skills: this.state.skills.map(x =>
+            x.skill.name === skill.skill.name ? skill : x
+          )
+        });
+      }
+      this.getWorkingData();
+    });
+  };
   render() {
     let { data } = this.state;
-    console.log(data.profile_pic);
+
     return Object.keys(data).length === 0 ? (
       <HomePageSpinner />
     ) : (
       <Flex flexDirection="column">
-        <DetailHeader
+        <TutorDetailHeader
           image={data.profile_pic}
           detail={[
             data.years_of_experience,
@@ -318,13 +369,15 @@ export class TutorDetailPage extends React.Component {
             data.email,
             data.phone_no
           ]}
+          frozen={this.skillIsFrozen()}
+          unFreezeProfile={() => this.updateSubjectStatus(null, "unfreeze")}
         >
           {this.idVerified(data.identification, true) && (
             <Text>Id Verified</Text>
           )}
           {data.email_verified && <Text>Email Verified</Text>}
           <Text>Social Veifications</Text>
-        </DetailHeader>
+        </TutorDetailHeader>
         <Tabs>
           <TabContent heading="Tutor Information">
             <Flex mb={4} flexDirection="column">
@@ -341,7 +394,7 @@ export class TutorDetailPage extends React.Component {
                   buttons={this.verificationButton()}
                 >
                   {data.identification ? (
-                    <Link
+                    <DLink
                       css={css`
                         cursor: pointer;
                       `}
@@ -349,7 +402,7 @@ export class TutorDetailPage extends React.Component {
                       href={data.identification.link}
                     >
                       {data.identification.link}
-                    </Link>
+                    </DLink>
                   ) : null}
                 </VerificationItem>
               )}
@@ -357,7 +410,7 @@ export class TutorDetailPage extends React.Component {
                 label="Profile Picture Approval"
                 buttons={this.profilePicButton()}
               >
-                <Link
+                <DLink
                   css={css`
                     cursor: pointer;
                   `}
@@ -365,7 +418,7 @@ export class TutorDetailPage extends React.Component {
                   href={data.profile_pic}
                 >
                   {data.profile_pic}
-                </Link>
+                </DLink>
               </VerificationItem>
 
               <ListGroup name="Tutor Description" />
@@ -430,10 +483,10 @@ export class TutorDetailPage extends React.Component {
                 </Flex>
               </Flex>
               {data.curriculum_explanation ? (
-                <>
+                <React.Fragment>
                   <Heading>Curriculum Explanation</Heading>
                   <Text p={3}>{data.curriculum_explanation}</Text>
-                </>
+                </React.Fragment>
               ) : null}
               <Flex justifyContent="space-between" pt={3}>
                 {!data.verified && (
@@ -452,12 +505,86 @@ export class TutorDetailPage extends React.Component {
                 >
                   Deny Tutor
                 </DialogButton>
+                {data.verified && (
+                  <DialogButton
+                    dialogText="Are you sure you want to freeze this tutor profile"
+                    confirmAction={() => {
+                      this.updateSubjectStatus(null, "freeze");
+                      this.setState({ data: { ...data, verified: false } });
+                    }}
+                    disabled={this.state.loading}
+                  >
+                    Freeze Profile
+                  </DialogButton>
+                )}
               </Flex>
             </Flex>
           </TabContent>
-          <TabContent heading="Subjects">
+          <TabContent heading="Subjects" activeTab={1}>
             <Flex flexDirection="column">
-              <Text>Subjects</Text>
+              {this.state.skills.length === 0 ? (
+                <HomePageSpinner />
+              ) : (
+                <Flex>
+                  <Flex
+                    flexDirection="column"
+                    css={css`
+                      flex: 1;
+                      overflow-y: scroll;
+                    `}
+                  >
+                    <SectionListPage
+                      data={this.state.skills}
+                      callback={skill => ({
+                        name: skill.skill_name,
+                        to:
+                          skill.status !== "denied" &&
+                          `${this.props.match.url}/subjects/${skill.skill_name}`
+                      })}
+                      funcGetter={item => item.status}
+                      Component={SubjectListItemComponent}
+                      orderFunc={(a, b) => {
+                        if (a.status < b.status) return -1;
+                        if (a.status > b.status) return 1;
+                        return 0;
+                      }}
+                      keyIndex="skill_name"
+                    />
+                  </Flex>
+                  <Flex
+                    px={3}
+                    py={3}
+                    flexDirection="column"
+                    css={css`
+                      flex: 4;
+                    `}
+                  >
+                    <Switch>
+                      <Route
+                        path="/tutor-list/:slug/subjects/:skill"
+                        render={pathProps => {
+                          return (
+                            <SubjectDetailSection
+                              {...pathProps}
+                              updateSubjectStatus={this.updateSubjectStatus}
+                              skills={this.state.skills}
+                              onRetakeTest={this.updateSubjectStatus}
+                            />
+                          );
+                        }}
+                      />
+                      {this.state.skills[0] &&
+                        this.state.skills[0].status !== "denied" && (
+                          <Redirect
+                            to={`${this.props.match.url}/subjects/${
+                              this.state.skills[0].skill_name
+                            }`}
+                          />
+                        )}
+                    </Switch>
+                  </Flex>
+                </Flex>
+              )}
             </Flex>
           </TabContent>
         </Tabs>

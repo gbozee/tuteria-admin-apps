@@ -452,7 +452,26 @@ export function getTutorDetail(key, value) {
   let rr = tutorList.find(x => x[key] === value);
   return rr || sampleTutorDetailData;
 }
-
+export const bookingData = [
+  {
+    user: { full_name: "Mrs Ego", email: "ego@example.com" },
+    tutor: {
+      full_name: "Jamie novako",
+      email: "jamie@example.com"
+    },
+    percentage_split: 75,
+    skill_name: "English Language",
+    status: "DELIVERED",
+    first_session: "2018-10-12 14:10:33",
+    last_session: "2018-10-12 14:10:33",
+    total_price: 20000,
+    hijack_tutor_link: "http://www.google.com",
+    hijack_client_link: "http://www.google.com",
+    order: "AABBDDESEES",
+    created: "2018-10-12 14:10:33",
+    modified: "2018-10-12 14:10:33"
+  }
+];
 export const testDataBookings = {
   bookings: [
     {
@@ -574,12 +593,43 @@ export const filterBookingsByStatus = status => {
   );
 };
 
-export const searchAllBookings = search => {
-  return testDataBookings.bookings.filter(booking => {
-    return (
-      booking.tutor.email.toLowerCase().includes(search.toLowerCase()) ||
-      booking.client.email.toLowerCase().includes(search.toLowerCase()) ||
-      booking.order.toLowerCase().includes(search.toLowerCase())
-    );
-  });
+export const searchAllBookings = (search, kind = "default") => {
+  return (kind === "default" ? testDataBookings.bookings : bookingData).filter(
+    booking => {
+      return (
+        booking.tutor.email.toLowerCase().includes(search.toLowerCase()) ||
+        booking.client.email.toLowerCase().includes(search.toLowerCase()) ||
+        booking.order.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+  );
 };
+
+const genericDetails = () => ({
+  heading: "I have the gadgets and tutoring skills, passing is the only option",
+  description: `Listening, writing and speaking are basic abilities one must possess as it is used daily to communicate locally but how well have you mastered these skills especially in a foreign environment? 
+I would start by introducing you to various aspects of English speakers on an audio headphone as well as identifying such pronunciations, word for word within time and quicker response time
+I would introduce you to newer ways to skim and scan as well as summarize at the same time(multitasking)
+Also we would demystify the common errors people make thus giving you an edge for the exams
+We would also cover quicker ways to write within time and expose you to academic materials as well as past questions of old ielts exams`,
+  quiz: {
+    score: 40,
+    pass_mark: 50
+  },
+  link: "http://www.google.com",
+  price: 2000,
+  location: "gwarinpa, Abuja",
+  stats: {
+    hours_taught: 31,
+    active_bookings: 0
+  }
+});
+export let skillData = [
+  { skill: { name: "English Language" }, status: "active" },
+  { skill: { name: "Chemistry" }, status: "denied" },
+  { skill: { name: "Yoruba" }, status: "pending" },
+  { skill: { name: "French" }, status: "active" },
+  { skill: { name: "Accounting" }, status: "modification" },
+  { skill: { name: "Hausa" }, status: "denied" },
+  { skill: { name: "Physics" }, status: "modification" }
+].map(x => ({ ...x, skill_name: x.skill.name, ...genericDetails() }));

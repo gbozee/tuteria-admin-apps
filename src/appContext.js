@@ -14,12 +14,16 @@ export const actions = {
   APPROVE_PROFILE_PIC: "APPROVE_PROFILE_PIC",
   UPLOAD_PROFILE_PIC: "UPLOAD_PROFILE_PIC",
   UPLOAD_ID: "UPLOAD_ID",
-  SAVE_PROGRESS: "SAVE_PROGRESS"
+  SAVE_PROGRESS: "SAVE_PROGRESS",
+  TUTOR_SKILLS: "TUTOR_SKILLS",
+  SKILL_ADMIN_ACTION: "SKILL_ADMIN_ACTION"
 };
 export const workingActions = {
   EMAIL_VERIFICATION: "email_verification",
   ID_VERIFICATION: "id_verification",
-  PROFILE_VERIFICATION: "profile_verification"
+  PROFILE_VERIFICATION: "profile_verification",
+  SKILL_MODIFICATION: "skill_modification",
+  FROZEN_PROFILES: "froze_profile"
 };
 const analytics = {
   TUTOR_APPROVAL: "APPROVE_TUTOR",
@@ -29,7 +33,11 @@ const analytics = {
   DENY_TUTOR: "DENY_TUTOR",
   EMAIL_VERIFY: "EMAIL_VERIFY",
   UPLOAD_PROFILE_PIC: "UPLOAD_PROFILE_PIC",
-  UPLOAD_ID: "UPLOAD_ID"
+  UPLOAD_ID: "UPLOAD_ID",
+  APPROVE_SKILLS: "APPROVE_SKILLS",
+  DENIED_SKILLS: "DENIED_SKILLS",
+  FROZEN_PROFILES: "FROZEN_PROFILES",
+  REQUIRES_MODIFICATION: "REQUIRES_MODIFICATION"
 };
 function updateAnalytics(firebaseAction, type, agent) {
   let date = format(new Date(), "D/MM/YYYY");
@@ -49,7 +57,7 @@ function getWorkingData(firebaseAction, agent, updateState) {
     return data;
   });
 }
-export function autoSave(firebaseAction, state) {
+export function autoSave(firebaseAction, state, defaultValue) {
   let { pending_verifications, agent = "Biola" } = state.context.state;
   return saveWorkingData(firebaseAction, agent, pending_verifications).then(
     () => {
@@ -90,6 +98,13 @@ function fetchTutorDetail(
       data: data[1]
     };
   });
+}
+function getTutorSkills(
+  firebaseAction,
+  params,
+  { getAdapter, state, updateState }
+) {
+  return getAdapter().getTutorSkills(params);
 }
 const getUnverifiedTutors = (
   firebaseAction,
@@ -318,8 +333,58 @@ function rejectIdentification(
       return data.find(x => x.email === email);
     });
 }
-function saveProgress(firebaseAction, value, { state }) {
+function saveProgress(firebaseAction, value, { state, updateState }) {
   autoSave(firebaseAction, state);
+}
+function skillAdminAction(
+  firebaseAction,
+  { skill, email, action, full_name },
+  { state, getAdapter, updateState }
+) {
+  let { agent = "Biola" } = state.context.state;
+  return getAdapter()
+    .skillAdminAction({ skill, email, action })
+    .then(data => {
+      if (["modification", "freeze"].includes(action)) {
+        let actionOptions = {
+          modification: workingActions.SKILL_MODIFICATION,
+          freeze: workingActions.FROZEN_PROFILES
+        };
+        let result = addToWorkingDirectory(
+          { email, full_name },
+          state,
+          actionOptions[action]
+        );
+        updateState({ pending_verifications: result }, s => {
+          autoSave(firebaseAction, s);
+        });
+      }
+      if (["active", "denied", "unfreeze"].includes(action)) {
+        let undoActions = {
+          active: workingActions.SKILL_MODIFICATION,
+          denied: workingActions.SKILL_MODIFICATION,
+          unfreeze: workingActions.FROZEN_PROFILES
+        };
+        let toRemove = removeFromWorkingDirectory(
+          email,
+          state,
+          undoActions[action]
+        );
+        updateState({ pending_verifications: toRemove }, s => {
+          autoSave(firebaseAction, s);
+        });
+      }
+      if (["denied", "active", "modification", "freeze"].includes(action)) {
+        let options = {
+          active: analytics.APPROVE_SKILLS,
+          denied: analytics.DENIED_SKILLS,
+          modification: analytics.REQUIRES_MODIFICATION,
+          freeze: analytics.FROZEN_PROFILES
+        };
+        updateAnalytics(firebaseAction, options[action], agent);
+      }
+      return data;
+    });
 }
 function approveTutorEmail(
   firebaseAction,
@@ -358,6 +423,7 @@ const dispatch = (action, existingOptions = {}, firebaseFunc) => {
       null,
       firebaseAction
     ),
+    [actions.TUTOR_SKILLS]: getTutorSkills.bind(null, firebaseAction),
     [actions.TUTOR_INFO]: fetchTutorDetail.bind(null, firebaseAction),
     [actions.APPROVE_TUTOR]: approveTutor.bind(null, firebaseAction),
     [actions.DENY_TUTOR]: denyTutor.bind(null, firebaseAction),
@@ -373,6 +439,7 @@ const dispatch = (action, existingOptions = {}, firebaseFunc) => {
     [actions.UPLOAD_PROFILE_PIC]: uploadProfilePic.bind(null, firebaseAction),
     [actions.UPLOAD_ID]: uploadVerificationId.bind(null, firebaseAction),
     [actions.SAVE_PROGRESS]: saveProgress.bind(null, firebaseAction),
+    [actions.SKILL_ADMIN_ACTION]: skillAdminAction.bind(null, firebaseAction),
     ...existingOptions
   };
   return options;
@@ -382,6 +449,13 @@ const componentDidMount = ({ updateState, state }, firebaseFunc) => {
   function firebaseAction(key, args) {
     return firebaseFunc.loadFireStore().then(() => firebaseFunc[key](...args));
   }
+  getUnverifiedTutors(
+    firebaseAction,
+    { refresh: true },
+    { getAdapter, state, updateState }
+  ).then(data => {
+    updateState({ tutor_list: data });
+  });
   getWorkingData(firebaseAction, agent, updateState).then(data => {
     updateState({ pending_verifications: data });
   });

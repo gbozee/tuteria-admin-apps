@@ -1,4 +1,7 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/core";
 import React from "react";
+import { Flex } from "@rebass/emotion";
 
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
@@ -6,6 +9,7 @@ import { linkTo } from "@storybook/addon-links";
 import LoginPage from "tuteria-shared/lib/shared/LoginPage";
 import TutorListPage from "../pages/TutorListPage";
 import { MemoryRouter as Router, Route } from "react-router";
+import { Link } from "react-router-dom";
 import { Button, Welcome } from "@storybook/react/demo";
 import TutorDetailPage from "../pages/TutorDetailPage";
 import WorkingSection from "../pages/WorkingSection";
@@ -45,6 +49,22 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
       adapter={devAdapter}
       context={appContext}
       firebase={appFirebase}
+      heading={
+        <Flex
+          pb={3}
+          justifyContent="space-between"
+          css={css`
+            flex-wrap: wrap;
+            > a {
+              padding-right: 10px;
+              padding-bottom: 10px;
+            }
+          `}
+        >
+          <Link to="/tutor-list">Tutor List Page</Link>
+          <Link to="/tutor-working-section">Tutor Working Section</Link>
+        </Flex>
+      }
     >
       {children}
     </WithRouter>
@@ -71,6 +91,17 @@ storiesOf("Tutor Success Application", module)
   ))
   .add("Tutor Working Section", () => (
     <RouterWrapper initialIndex={2}>
+      <Route
+        path="/tutor-list"
+        exact
+        render={props => (
+          <TutorListPage
+            {...props}
+            detailPageUrl={slug => `/tutor-list/${slug}`}
+          />
+        )}
+      />
+      <Route path="/tutor-list/:slug" component={TutorDetailPage} />
       <Route
         path="/tutor-working-section"
         render={props => (

@@ -59,10 +59,19 @@ export class TutorListPage extends React.Component {
 
   state = {
     tutors: [],
-    selection: ""
+    selection: "",
+    searchParams: ""
   };
   static defaultProps = {
     detailPageUrl: () => {}
+  };
+  onSearch = e => {
+    this.setState({ searchParams: e.target.value });
+  };
+  onKeyDown = e => {
+    if (e.keyCode === 13) {
+      this.fetchList(true);
+    }
   };
   componentDidMount() {
     this.fetchList(true);
@@ -72,7 +81,11 @@ export class TutorListPage extends React.Component {
     let { dispatch, actions } = this.context;
     dispatch({
       type: actions.GET_UNVERIFIED_TUTORS,
-      value: { refresh, selection: this.state.selection }
+      value: {
+        refresh,
+        selection: this.state.selection,
+        q: this.state.searchParams
+      }
     }).then(data => {
       this.setState({ tutors: data });
     });
@@ -111,7 +124,9 @@ export class TutorListPage extends React.Component {
             <Flex flexDirection="column">
               <DateFilter
                 displayDate={false}
+                onSearchChange={this.onSearch}
                 selection={this.state.selection}
+                onKeyDown={this.onKeyDown}
                 onFilterChange={e =>
                   this.setState({ selection: e.target.value }, () => {
                     this.fetchList();

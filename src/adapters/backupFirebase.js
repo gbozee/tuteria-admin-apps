@@ -30,9 +30,9 @@ function appFireBase(keys) {
         .doc(agent)
         .set(data);
     },
-    getAnalytics: agent => {
+    getAnalytics: (agent, defaultValue) => {
       let ref = db.collection(analytics).doc(agent);
-      return genericGet(ref);
+      return genericGet(ref, defaultValue);
     },
     saveWorkingData: (agent, data) => {
       return db
@@ -99,8 +99,7 @@ function genericGet(ref, defaultParam = {}, result) {
         if (result) {
           return { record: result };
         }
-        debugger;
-        return doc.data();
+        return doc && typeof doc.data === "function" ? doc.data() : {};
       } else {
         return defaultParam;
       }

@@ -9,6 +9,8 @@ import {
   testDataBookings,
   testDataGetBooking,
   filterBookingsByStatus,
+  bookingData,
+  skillData,
   searchAllBookings
 } from "./test_data";
 import { saveFragment } from "tuteria-shared/lib/shared/localStorage";
@@ -146,6 +148,24 @@ const filterBookings = status => {
 const searchBookings = search => {
   return new Promise(resolve => resolve(searchAllBookings(search)));
 };
+
+const getAllBookingsFilter = ({ q }) => {
+  let result = bookingData;
+  if (q) {
+    result = searchAllBookings(q, "not");
+  }
+  return new Promise(resolve => resolve(result));
+};
+const getTutorSkills = params => {
+  return new Promise(resolve => resolve(skillData));
+};
+function skillAdminAction({ skill, email, action }) {
+  let result = skill;
+  if (["active", "modification", "deniend"].includes(action)) {
+    result.status = action;
+  }
+  return new Promise(resolve => resolve(result));
+}
 export default {
   login,
   authenticate,
@@ -173,6 +193,9 @@ export default {
   uploadVerificationId: uploadVerificationIdEmail,
   // booking followup
   getAllBookings,
+  getAllBookingsFilter,
+  skillAdminAction,
+  getTutorSkills,
   getBooking,
   filterBookings,
   searchBookings
