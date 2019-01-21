@@ -19,14 +19,19 @@ import testServerAdapter from "../adapters/test";
 import bookingContext from "../bookingContext";
 import appFirebase from "../adapters/backupFirebase";
 import { RequestDetailPage } from "../pages/RequestDetailsPage";
-import CSDetailPage from "../pages/CSDetailPage";
+import CSListPage from "../pages/CSListPage";
 import GLTutorDetailPage from "../pages/GLTutorDetailPage";
 import GLClientDetailPage from "../pages/GLClientDetailPage";
 import GLDetailPage from "../pages/GLDetailPage";
 import ClientListPage from "../pages/ClientListPage";
 import GLTutorBookingListPage from "../pages/GLTutorBookingListPage";
 
-const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
+const RouterWrapper = ({
+  children,
+  initialIndex = 0,
+  test = true,
+  topLinks
+}) => {
   return (
     <WithRouter
       test={test}
@@ -43,24 +48,21 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
             }
           `}
         >
-          <Link to="/requests">Request List Page</Link>
-          <Link to="/bookings">Booking List Page</Link>
-          <Link to="/booking-working-section">Booking Working Page</Link>
+          {topLinks}
         </Flex>
       }
       routerProps={{
         initialEntries: [
-          "/requests",
-          "/requests/1228/transactions",
+          "/requests/one-on-one",
+          "/requests/one-on-one/1228/transactions",
+          "/requests/group",
+          "/request/group/123",
           "/request-bookings",
           "/request-bookings/123",
-          "/group-lessons-tutors/123",
-          "/group-lesson-tutors",
-          "/group-lesson-clients",
-          "/group-lesson-clients/123",
-          "/group-lesson/123",
-          "/bookings",
-          "/bookings/AABBDDESEES",
+          "/bookings/one-on-one",
+          "/bookings/one-on-one/AABBDDESEES",
+          "/bookings/group",
+          "/bookings/group/123",
           "/booking-working-section"
         ],
         initialIndex
@@ -74,130 +76,103 @@ const RouterWrapper = ({ children, initialIndex = 0, test = true }) => {
   );
 };
 storiesOf("Sales and Customer Success Application", module)
-  .add("SListPage", () => (
-    <RouterWrapper>
+  .add("Requests List Page", () => (
+    <RouterWrapper
+      topLinks={
+        <React.Fragment>
+          <Link to="/requests/one-on-one">Regular Requests</Link>
+          <Link to="/requests/group">Group Requests</Link>
+          <Link to="/requests/group/ADDESS">Group Request Detail</Link>
+          <Link to="/request-working-section">Request Working Section</Link>
+        </React.Fragment>
+      }
+    >
       <Route
-        path="/requests"
+        path="/requests/one-on-one"
         exact
         render={props => {
           return (
             <SListPage
               {...props}
-              detailPageUrl={order => `/requests/${order}/transactions`}
+              detailPageUrl={order =>
+                `/requests/one-on-one/${order}/transactions`
+              }
             />
           );
         }}
       />
-    </RouterWrapper>
-  ))
-  .add("SDetailPage", () => (
-    <RouterWrapper initialIndex={1}>
       <Route
-        path="/requests/112/transactions"
+        path="/requests/one-on-one/:slug/transactions"
         render={props => {
           return <RequestDetailPage {...props} />;
         }}
       />
-    </RouterWrapper>
-  ))
-  .add("CSListPage", () => (
-    <RouterWrapper initialIndex={2}>
       <Route
-        path="/request-bookings"
-        render={props => {
-          return <CSListPage {...props} />;
-        }}
-      />
-    </RouterWrapper>
-  ))
-  .add("CSDetailPage", () => (
-    <RouterWrapper initialIndex={3}>
-      <Route
-        path="/request-bookings/123"
-        render={props => {
-          return <CSDetailPage {...props} />;
-        }}
-      />
-    </RouterWrapper>
-  ))
-  .add("GLTutorDetailPage", () => (
-    <RouterWrapper initialIndex={4}>
-      <Route
-        path="/group-lessons-tutors/123"
-        render={props => {
-          return <GLTutorDetailPage {...props} />;
-        }}
-      />
-    </RouterWrapper>
-  ))
-  .add("GLTutorBookingListPage", () => (
-    <RouterWrapper initialIndex={5}>
-      <Route
-        path="/group-lesson-tutors"
-        render={props => {
-          return <GLTutorBookingListPage {...props} />;
-        }}
-      />
-    </RouterWrapper>
-  ))
-  .add("GLClientListPage", () => (
-    <RouterWrapper initialIndex={6}>
-      <Route
-        path="/group-lesson-clients"
+        path="/requests/group"
         exact
         render={props => {
           return (
             <ClientListPage
               {...props}
-              detailPageUrl={order => `/group-lesson-client/${order}`}
+              detailPageUrl={order => `/requests/group/${order}`}
             />
           );
         }}
       />
-    </RouterWrapper>
-  ))
-  .add("GLClientDetailPage", () => (
-    <RouterWrapper initialIndex={7}>
       <Route
-        path="/group-lesson-clients/123"
+        path="/requests/group/:slug"
+        exact
         render={props => {
           return <GLClientDetailPage {...props} />;
         }}
       />
     </RouterWrapper>
   ))
-  .add("GLDetailPage", () => (
-    <RouterWrapper initialIndex={8}>
+  .add("Booking List Page", () => (
+    <RouterWrapper
+      initialIndex={6}
+      topLinks={
+        <React.Fragment>
+          <Link to="/bookings/one-on-one">Bookings</Link>
+          <Link to="/bookings/group">Group lesson bookings</Link>
+          <Link to="/request-bookings">Kola Bookings</Link>
+          <Link to="/bookings/one-on-one/ADDESS">Booking Detail Page</Link>
+          <Link to="/booking-working-section">Booking Working Page</Link>
+        </React.Fragment>
+      }
+    >
       <Route
-        path="/group-lesson/123"
+        path="/request-bookings"
         render={props => {
-          return <GLDetailPage {...props} />;
+          return <CSListPage {...props} />;
         }}
       />
-    </RouterWrapper>
-  ))
-  .add("BListPage", () => (
-    <RouterWrapper initialIndex={9}>
-    <Route
-        path="/requests"
+      <Route
+        path="/bookings/group"
         exact
         render={props => {
-          return (
-            <SListPage
-              {...props}
-              detailPageUrl={order => `/requests/${order}/transactions`}
-            />
-          );
+          return <GLTutorBookingListPage {...props} />;
         }}
       />
       <Route
-        path="/bookings"
+        path="/bookings/group/:order"
+        render={props => {
+          return <GLTutorDetailPage {...props} />;
+        }}
+      />
+      <Route
+        path="/bookings/one-on-one"
         exact
         render={props => (
           <BListPage {...props} detailPageUrl={order => `/bookings/${order}`} />
         )}
       />
-      <Route path="/bookings/:order" component={BDetailPage} />
+      <Route
+        path="/bookings/one-on-one/:order"
+        render={props => {
+          return <BDetailPage {...props} />;
+        }}
+      />
       <Route
         path="/booking-working-section"
         render={props => (

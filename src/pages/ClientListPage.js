@@ -1,32 +1,33 @@
 /** @jsx jsx */
-import React, { Component } from 'react';
-import { jsx, css } from '@emotion/core';
-import { Flex } from '@rebass/emotion';
-import { RequestStatusSummary } from './SListPage';
-import { SectionListPage } from './reusables';
-import { SpinnerContainer } from 'tuteria-shared/lib/shared/primitives/Spinner';
-import { DateFilter } from 'tuteria-shared/lib/shared/DateFilter';
-import { parseQuery } from 'tuteria-shared/lib/shared/utils';
+import React, { Component } from "react";
+import { jsx, css } from "@emotion/core";
+import { Flex } from "@rebass/emotion";
+import { RequestStatusSummary } from "./SListPage";
+import { SectionListPage } from "./reusables";
+import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
+import { DateFilter } from "tuteria-shared/lib/shared/DateFilter";
+import { parseQuery } from "tuteria-shared/lib/shared/utils";
+import Link from 'react-router-dom/Link'
 import {
   GroupLessonListItem,
-  getDate,
-} from 'tuteria-shared/lib/shared/reusables';
+  getDate
+} from "tuteria-shared/lib/shared/reusables";
 
 export class ClientListPage extends Component {
   constructor(props) {
     super(props);
     let {
-      location: { search },
+      location: { search }
     } = this.props;
-    let { from = '', to = '', q = '', status = '' } = parseQuery(search);
+    let { from = "", to = "", q = "", status = "" } = parseQuery(search);
     let state = {
       dateFilter: { from, to },
       searchParam: q,
-      filter: status,
+      filter: status
     };
     this.state = {
-      selection: '',
-      dateFilter: state.dateFilter,
+      selection: "",
+      dateFilter: state.dateFilter
     };
   }
   onDateFilter = ({ from, to }) => {
@@ -35,65 +36,65 @@ export class ClientListPage extends Component {
   filteredResults = () => {
     return [
       {
-        slug: 'ABCDESDDESS',
-        full_name: 'Shola Ameobi',
-        email: 'james@example.com',
-        phone_no: '08033002232',
+        slug: "ABCDESDDESS",
+        full_name: "Shola Ameobi",
+        email: "james@example.com",
+        phone_no: "08033002232",
         budget: 40000,
         no_of_students: 5,
-        skill: 'IELTS',
-        tutor: 'Chidiebere',
-        status: 'pending',
-        created: '2018-10-12 14:10:33',
-        modified: '2018-10-12 14:10:33',
-        type: 'January Standard Class',
-        duration: '10am - 2pm',
-        location: 'Gbagada',
+        skill: "IELTS",
+        tutor: "Chidiebere",
+        status: "pending",
+        created: "2018-10-12 14:10:33",
+        modified: "2018-10-12 14:10:33",
+        type: "January Standard Class",
+        duration: "10am - 2pm",
+        location: "Gbagada",
         start_date:
-          'Sat Mar 23 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
+          "Sat Mar 23 2019 00:00:00 GMT+0100 (West Africa Standard Time)",
         end_date:
-          'Sun Apr 14 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
+          "Sun Apr 14 2019 00:00:00 GMT+0100 (West Africa Standard Time)"
       },
       {
-        slug: 'ABCDESDEES1',
-        full_name: 'Dele Alli',
-        email: 'dele.alli@example.com',
-        phone_no: '08033002132',
+        slug: "ABCDESDEES1",
+        full_name: "Dele Alli",
+        email: "dele.alli@example.com",
+        phone_no: "08033002132",
         budget: 10000,
         no_of_students: 8,
-        skill: 'IELTS',
-        tutor: 'Chidiebere',
-        status: 'pending',
-        created: '2018-10-12 14:10:33',
-        modified: '2018-10-12 14:10:33',
-        type: 'January Standard Class',
-        duration: '10am - 2pm',
-        location: 'Gbagada',
+        skill: "IELTS",
+        tutor: "Chidiebere",
+        status: "pending",
+        created: "2018-10-12 14:10:33",
+        modified: "2018-10-12 14:10:33",
+        type: "January Standard Class",
+        duration: "10am - 2pm",
+        location: "Gbagada",
         start_date:
-          'Wed Apr 24 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
+          "Wed Apr 24 2019 00:00:00 GMT+0100 (West Africa Standard Time)",
         end_date:
-          'Wed June 19 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
+          "Wed June 19 2019 00:00:00 GMT+0100 (West Africa Standard Time)"
       },
       {
-        slug: 'ABCDESDEES1',
-        full_name: 'Harry Kane',
-        email: 'harrykane@example.com',
-        phone_no: '08078654412',
+        slug: "ABCDESDEES1",
+        full_name: "Harry Kane",
+        email: "harrykane@example.com",
+        phone_no: "08078654412",
         budget: 1000,
         no_of_students: 18,
-        skill: 'IELTS',
-        tutor: 'Chidiebere',
-        status: 'pending',
-        created: '2018-10-12 14:10:33',
-        modified: '2018-10-12 14:10:33',
-        type: 'January Standard Class',
-        duration: '10am - 2pm',
-        location: 'Gbagada',
+        skill: "IELTS",
+        tutor: "Chidiebere",
+        status: "pending",
+        created: "2018-10-12 14:10:33",
+        modified: "2018-10-12 14:10:33",
+        type: "January Standard Class",
+        duration: "10am - 2pm",
+        location: "Gbagada",
         start_date:
-          'Wed Apr 24 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
+          "Wed Apr 24 2019 00:00:00 GMT+0100 (West Africa Standard Time)",
         end_date:
-          'Wed June 19 2019 00:00:00 GMT+0100 (West Africa Standard Time)',
-      },
+          "Wed June 19 2019 00:00:00 GMT+0100 (West Africa Standard Time)"
+      }
     ];
   };
   onSearch = () => {};
@@ -106,7 +107,7 @@ export class ClientListPage extends Component {
       BOOKED: 6,
       PAYED: 3,
       COLD: 8,
-      TO_BE_BOOKED: 11,
+      TO_BE_BOOKED: 11
     };
     return (
       <Flex flexDirection="column">
@@ -134,7 +135,7 @@ export class ClientListPage extends Component {
             amount={10000000}
           />
         </Flex>
-        <Flex flexDirection={'column'}>
+        <Flex flexDirection={"column"}>
           <DateFilter
             onSearchChange={e => {
               this.setState({ searchParam: e.target.value }, () => {});
@@ -150,35 +151,35 @@ export class ClientListPage extends Component {
             placeholder="Search by email"
             searchButton={{
               display: true,
-              onClick: this.serverSearch,
+              onClick: this.serverSearch
             }}
             filters={[
               {
-                name: 'Subject',
-                selection: '',
+                name: "Subject",
+                selection: "",
                 options: [
-                  { value: '', label: 'Filter by subject' },
-                  { value: 'Chinese', label: 'Chinese' },
-                  { value: 'IELTS', label: 'IELTS' },
-                  { value: 'Academic', label: 'Academic' },
-                  { value: 'German', label: 'German' },
-                ],
+                  { value: "", label: "Filter by subject" },
+                  { value: "Chinese", label: "Chinese" },
+                  { value: "IELTS", label: "IELTS" },
+                  { value: "Academic", label: "Academic" },
+                  { value: "German", label: "German" }
+                ]
               },
               {
-                name: 'Class',
-                selection: '',
-                options: [{ value: '', label: 'Filter by class' }],
+                name: "Class",
+                selection: "",
+                options: [{ value: "", label: "Filter by class" }]
               },
               {
-                name: 'Status',
-                selection: '',
+                name: "Status",
+                selection: "",
                 options: [
-                  { value: '', label: 'Filter by status' },
-                  { value: 'Not Paid', label: 'Not Paid' },
-                  { value: 'Paid Full', label: 'Paid Full' },
-                  { value: 'Paid Half', label: 'Paid Half' },
-                ],
-              },
+                  { value: "", label: "Filter by status" },
+                  { value: "Not Paid", label: "Not Paid" },
+                  { value: "Paid Full", label: "Paid Full" },
+                  { value: "Paid Half", label: "Paid Half" }
+                ]
+              }
             ]}
           />
         </Flex>
@@ -186,7 +187,11 @@ export class ClientListPage extends Component {
           <Flex flexDirection="column">
             <SectionListPage
               data={this.filteredResults()}
-              callback={request => request}
+              callback={request => ({
+                ...request,
+                to: this.props.detailPageUrl(request.slug)
+              })}
+              LinkComponent={Link}
               Component={GroupLessonListItem}
               keyValue="start_date"
               funcGetter={item =>
