@@ -178,6 +178,18 @@ storiesOf("Sales and Customer Success Application", module)
   ))
   .add("BListPage", () => (
     <RouterWrapper initialIndex={9}>
+    <Route
+        path="/requests"
+        exact
+        render={props => {
+          return (
+            <SListPage
+              {...props}
+              detailPageUrl={order => `/requests/${order}/transactions`}
+            />
+          );
+        }}
+      />
       <Route
         path="/bookings"
         exact

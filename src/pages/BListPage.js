@@ -3,7 +3,6 @@ import { css, jsx } from "@emotion/core";
 import { Flex, Card, Box, Text } from "@rebass/emotion";
 import { DateFilter } from "tuteria-shared/lib/shared/DateFilter";
 import { parseQuery } from "tuteria-shared/lib/shared/utils";
-import { Link } from "react-router-dom";
 import Modal from "tuteria-shared/lib/shared/primitives/Modal";
 import { Button } from "tuteria-shared/lib/shared/primitives";
 import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
@@ -14,6 +13,7 @@ import {
   BookingListItem
 } from "tuteria-shared/lib/shared/reusables";
 import React from "react";
+import Link from 'react-router-dom/Link'
 
 class SalesListPage extends React.Component {
   static contextType = DataContext;
@@ -163,7 +163,7 @@ class SalesListPage extends React.Component {
                 // }
                 to: this.props.detailPageUrl(request.order)
               })}
-              LinkComponent={Flex}
+              LinkComponent={Link}
               Component={BookingListItem}
               keyValue="created"
             />
