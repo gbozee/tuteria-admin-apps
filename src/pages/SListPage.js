@@ -1,28 +1,31 @@
 /** @jsx jsx */
-import { css, jsx } from "@emotion/core";
-import { Flex, Card, Box, Text } from "@rebass/emotion";
-import { DateFilter } from "tuteria-shared/lib/shared/DateFilter";
-import { parseQuery } from "tuteria-shared/lib/shared/utils";
-import Link from "react-router-dom/Link";
-import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
-import { RequestListItem, SectionListPage, SummaryCardList } from "./reusables";
-import React from "react";
+import { css, jsx } from '@emotion/core';
+import { Flex, Card, Box, Text } from '@rebass/emotion';
+import { DateFilter } from 'tuteria-shared/lib/shared/DateFilter';
+import { parseQuery } from 'tuteria-shared/lib/shared/utils';
+import Link from 'react-router-dom/Link';
+import { FormDrawer, RequestForm } from 'tuteria-shared/lib/shared/components';
+import { SpinnerContainer } from 'tuteria-shared/lib/shared/primitives/Spinner';
+import { RequestListItem, SectionListPage, SummaryCardList } from './reusables';
+import React from 'react';
+import { Button } from 'tuteria-shared/lib/shared/primitives';
 
 class SalesListPage extends React.Component {
   constructor(props) {
     super(props);
     let {
-      location: { search }
+      location: { search },
     } = this.props;
-    let { from = "", to = "", q = "", status = "" } = parseQuery(search);
+    let { from = '', to = '', q = '', status = '' } = parseQuery(search);
     let state = {
       dateFilter: { from, to },
       searchParam: q,
-      filter: status
+      filter: status,
     };
     this.state = {
-      selection: "",
-      dateFilter: state.dateFilter
+      selection: '',
+      dateFilter: state.dateFilter,
+      showModal: false,
     };
   }
   onDateFilter = ({ from, to }) => {
@@ -31,17 +34,17 @@ class SalesListPage extends React.Component {
   filteredResults = () => {
     return [
       {
-        slug: "ABCDESDDESS",
-        full_name: "Shola Ameobi",
-        email: "james@example.com",
-        phone_no: "08033002232",
-        skill: "IELTS",
+        slug: 'ABCDESDDESS',
+        full_name: 'Shola Ameobi',
+        email: 'james@example.com',
+        phone_no: '08033002232',
+        skill: 'IELTS',
         budget: 20000,
-        tutor: "Chidiebere",
-        status: "pending",
-        created: "2018-10-12 14:10:33",
-        modified: "2018-10-12 14:10:33"
-      }
+        tutor: 'Chidiebere',
+        status: 'pending',
+        created: '2018-10-12 14:10:33',
+        modified: '2018-10-12 14:10:33',
+      },
     ];
   };
   onSearch = () => {};
@@ -54,29 +57,40 @@ class SalesListPage extends React.Component {
       BOOKED: 6,
       PAYED: 3,
       COLD: 8,
-      TO_BE_BOOKED: 11
+      TO_BE_BOOKED: 11,
     };
     return (
       <Flex flexDirection="column">
         <SummaryCardList
           items={[
             {
-              name: "Paid Requests",
+              name: 'Paid Requests',
               amount: 200000,
               count: 3,
-              count_text: "Request count"
+              count_text: 'Request count',
             },
             {
-              name: "Pending Requests",
+              name: 'Pending Requests',
               amount: 500000,
               count: 30,
-              count_text: "Request count"
+              count_text: 'Request count',
             },
-            { name: "Total Revenue from lessons", amount: 400000, count: 25 },
-            { name: "Combined Revenue", amount: 100000, count: 200 }
+            { name: 'Total Revenue from lessons', amount: 400000, count: 25 },
+            { name: 'Combined Revenue', amount: 100000, count: 200 },
           ]}
         />
-        <Flex flexDirection={"column"}>
+        <Flex justifyContent="flex-end">
+          <Button onClick={() => this.setState({ showModal: true })}>
+            New Request
+          </Button>
+          <FormDrawer
+            isOpen={this.state.showModal}
+            onClose={() => this.setState({ showModal: false })}
+          >
+            <RequestForm />
+          </FormDrawer>
+        </Flex>
+        <Flex flexDirection={'column'}>
           <DateFilter
             onSearchChange={e => {
               this.setState({ searchParam: e.target.value }, () => {});
@@ -92,38 +106,38 @@ class SalesListPage extends React.Component {
             placeholder="Search by email"
             searchButton={{
               display: true,
-              onClick: this.serverSearch
+              onClick: this.serverSearch,
             }}
             filterOptions={[
-              { value: "", label: "All" },
+              { value: '', label: 'All' },
               {
                 value: actions.ISSUED,
-                label: "issued requests"
+                label: 'issued requests',
               },
               {
                 value: actions.COMPLETED,
-                label: "completed requests"
+                label: 'completed requests',
               },
               {
                 value: actions.PENDING,
-                label: "pending requests"
+                label: 'pending requests',
               },
               {
                 value: actions.MEETING,
-                label: "meet with client"
+                label: 'meet with client',
               },
               {
                 value: actions.PAYED,
-                label: "paid requests"
+                label: 'paid requests',
               },
               {
                 value: actions.COLD,
-                label: "cold clients"
+                label: 'cold clients',
               },
               {
                 value: actions.TO_BE_BOOKED,
-                label: "requests to be booked"
-              }
+                label: 'requests to be booked',
+              },
             ]}
           />
         </Flex>
@@ -133,7 +147,7 @@ class SalesListPage extends React.Component {
               data={this.filteredResults()}
               callback={request => ({
                 ...request,
-                to: this.props.detailPageUrl(request.slug)
+                to: this.props.detailPageUrl(request.slug),
               })}
               LinkComponent={Link}
               Component={RequestListItem}
