@@ -1,14 +1,14 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
-import { Flex } from '@rebass/emotion';
-import React from 'react';
+import { css, jsx } from "@emotion/core";
+import { Flex } from "@rebass/emotion";
+import React from "react";
 import {
   ListItem,
   ListGroup,
-  getDate,
-} from 'tuteria-shared/lib/shared/reusables';
-import Link from 'react-router-dom/Link';
-import { Button } from 'tuteria-shared/lib/shared/primitives';
+  getDate
+} from "tuteria-shared/lib/shared/reusables";
+import Link from "react-router-dom/Link";
+import { Button } from "tuteria-shared/lib/shared/primitives";
 export {
   AsLink,
   DetailItem,
@@ -17,24 +17,25 @@ export {
   DetailHeader,
   PVerificationListItem,
   RequestListItem,
-} from 'tuteria-shared/lib/shared/reusables';
+  SummaryCardList
+} from "tuteria-shared/lib/shared/reusables";
 export { ListItem, ListGroup, getDate, Link };
 
 export class ReviewForm extends React.Component {
   state = {
     fields: {
       score: 1,
-      text: '',
+      text: ""
     },
-    reviewOptions: [1, 2, 3, 4, 5],
+    reviewOptions: [1, 2, 3, 4, 5]
   };
   onChange = (field, callback) => e => {
     let result = callback(e);
     this.setState(({ fields }) => ({
       fields: {
         ...fields,
-        [field]: result,
-      },
+        [field]: result
+      }
     }));
   };
   onSubmit = () => {
@@ -56,11 +57,11 @@ export class ReviewForm extends React.Component {
           placeholder="Enter review here"
           rows={10}
           value={fields.text}
-          onChange={this.onChange('text', e => e.target.value)}
+          onChange={this.onChange("text", e => e.target.value)}
         />
         <select
           value={fields.score}
-          onChange={this.onChange('score', e => e.target.value)}
+          onChange={this.onChange("score", e => e.target.value)}
           css={css`
             margin: 8px 0;
             display: block;

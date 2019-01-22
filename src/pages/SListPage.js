@@ -3,38 +3,11 @@ import { css, jsx } from "@emotion/core";
 import { Flex, Card, Box, Text } from "@rebass/emotion";
 import { DateFilter } from "tuteria-shared/lib/shared/DateFilter";
 import { parseQuery } from "tuteria-shared/lib/shared/utils";
-import { Link } from "react-router";
+import Link from "react-router-dom/Link";
 import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
-import { RequestListItem, SectionListPage } from "./reusables";
+import { RequestListItem, SectionListPage, SummaryCardList } from "./reusables";
 import React from "react";
-export const RequestStatusSummary = ({
-  label,
-  amount = 0,
-  no = 0,
-  label_name = "No of bookings"
-}) => {
-  return (
-    <Card
-      fontSize={6}
-      fontWeight="bold"
-      width={[1, 1, 1 / 2]}
-      p={5}
-      my={5}
-      mx={2}
-      bg="#f6f6ff"
-      borderRadius={8}
-      boxShadow="0 2px 16px rgba(0, 0, 0, 0.25)"
-    >
-      <Box>
-        <Text fontSize={2}>{label}</Text>
-      </Box>
-      {amount.toLocaleString()}
-      <Text fontSize={3}>
-        {label_name}: {no}
-      </Text>
-    </Card>
-  );
-};
+
 class SalesListPage extends React.Component {
   constructor(props) {
     super(props);
@@ -63,6 +36,7 @@ class SalesListPage extends React.Component {
         email: "james@example.com",
         phone_no: "08033002232",
         skill: "IELTS",
+        budget: 20000,
         tutor: "Chidiebere",
         status: "pending",
         created: "2018-10-12 14:10:33",
@@ -84,30 +58,24 @@ class SalesListPage extends React.Component {
     };
     return (
       <Flex flexDirection="column">
-        <Flex>
-          <RequestStatusSummary
-            label_name="Request count"
-            label="Paid Requests"
-            amount={200000}
-            no={3}
-          />
-          <RequestStatusSummary
-            label_name="Request count"
-            label="Pending Requests"
-            no={30}
-            amount={500000}
-          />
-          <RequestStatusSummary
-            label="Total Revenue from sales"
-            no={25}
-            amount={400000}
-          />
-          <RequestStatusSummary
-            label="Combined Revenue"
-            no={200}
-            amount={10000000}
-          />
-        </Flex>
+        <SummaryCardList
+          items={[
+            {
+              name: "Paid Requests",
+              amount: 200000,
+              count: 3,
+              count_text: "Request count"
+            },
+            {
+              name: "Pending Requests",
+              amount: 500000,
+              count: 30,
+              count_text: "Request count"
+            },
+            { name: "Total Revenue from lessons", amount: 400000, count: 25 },
+            { name: "Combined Revenue", amount: 100000, count: 200 }
+          ]}
+        />
         <Flex flexDirection={"column"}>
           <DateFilter
             onSearchChange={e => {
@@ -163,7 +131,11 @@ class SalesListPage extends React.Component {
           <Flex flexDirection="column">
             <SectionListPage
               data={this.filteredResults()}
-              callback={request => request}
+              callback={request => ({
+                ...request,
+                to: this.props.detailPageUrl(request.slug)
+              })}
+              LinkComponent={Link}
               Component={RequestListItem}
               keyValue="created"
             />

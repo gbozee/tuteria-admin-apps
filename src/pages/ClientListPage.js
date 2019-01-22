@@ -2,12 +2,11 @@
 import React, { Component } from "react";
 import { jsx, css } from "@emotion/core";
 import { Flex } from "@rebass/emotion";
-import { RequestStatusSummary } from "./SListPage";
-import { SectionListPage } from "./reusables";
+import { SectionListPage, SummaryCardList } from "./reusables";
 import { SpinnerContainer } from "tuteria-shared/lib/shared/primitives/Spinner";
 import { DateFilter } from "tuteria-shared/lib/shared/DateFilter";
 import { parseQuery } from "tuteria-shared/lib/shared/utils";
-import Link from 'react-router-dom/Link'
+import Link from "react-router-dom/Link";
 import {
   GroupLessonListItem,
   getDate
@@ -111,30 +110,23 @@ export class ClientListPage extends Component {
     };
     return (
       <Flex flexDirection="column">
-        <Flex>
-          <RequestStatusSummary
-            label_name="Request count"
-            label="Paid Requests"
-            amount={200000}
-            no={3}
-          />
-          <RequestStatusSummary
-            label_name="Request count"
-            label="Pending Requests"
-            no={30}
-            amount={500000}
-          />
-          <RequestStatusSummary
-            label="Total Revenue from lessons"
-            no={25}
-            amount={400000}
-          />
-          <RequestStatusSummary
-            label="Combined Revenue"
-            no={200}
-            amount={10000000}
-          />
-        </Flex>
+        <SummaryCardList
+          items={[
+            {
+              name: "Paid Requests",
+              amount: 200000,
+              count: 3,
+              count_text: "Request count"
+            },
+            {
+              name: "Pending Requests",
+              amount: 500000,
+              count: 30,
+              count_text: "Request count"
+            },
+            { name: "Total Revenue from lessons", amount: 400000, count: 25 }
+          ]}
+        />
         <Flex flexDirection={"column"}>
           <DateFilter
             onSearchChange={e => {
@@ -189,7 +181,9 @@ export class ClientListPage extends Component {
               data={this.filteredResults()}
               callback={request => ({
                 ...request,
-                to: this.props.detailPageUrl(request.slug)
+                to: this.props.detailPageUrl(request.slug),
+                request_type: "group",
+                rightBottom: getDate(request.created)
               })}
               LinkComponent={Link}
               Component={GroupLessonListItem}
