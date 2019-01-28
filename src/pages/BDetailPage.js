@@ -12,6 +12,7 @@ import {
 } from 'tuteria-shared/lib/shared/reusables';
 import { Button } from 'tuteria-shared/lib/shared/primitives';
 import { ReviewForm } from './reusables';
+import { FormDrawer, BookingForm } from 'tuteria-shared/lib/shared/components';
 
 // class ReviewForm extends Component {
 //   state = {
@@ -159,6 +160,7 @@ export default class CSDetailPage extends Component {
         },
       ],
     },
+    showDrawer: false
   };
   submitReview = data => {
     console.log(data);
@@ -170,7 +172,7 @@ export default class CSDetailPage extends Component {
     return (
       <>
         <div>
-          <BookingDetailHeader {...request} />
+          <BookingDetailHeader {...request} onEdit={() => this.setState({showDrawer: true})} />
         </div>
         <div>
           <ListGroup name="Sessions" />
@@ -250,6 +252,14 @@ export default class CSDetailPage extends Component {
             );
           })}
         </div>
+        <FormDrawer
+          edit
+          heading="Booking"
+          isOpen={this.state.showDrawer}
+          onClose={() => this.setState({ showDrawer: false })}
+        >
+          <BookingForm fields={request} />
+        </FormDrawer>
       </>
     );
   }

@@ -14,6 +14,7 @@ import {
 } from "tuteria-shared/lib/shared/reusables";
 import React from "react";
 import Link from 'react-router-dom/Link'
+import { BookingForm, FormDrawer } from "tuteria-shared/lib/shared/components";
 
 class SalesListPage extends React.Component {
   static contextType = DataContext;
@@ -35,6 +36,7 @@ class SalesListPage extends React.Component {
       bookings: [],
       selectedBooking: null,
       displayModal: false,
+      showDrawer: false,
       remark: null
     };
   }
@@ -98,6 +100,18 @@ class SalesListPage extends React.Component {
     };
     return (
       <Flex flexDirection="column">
+      <Flex justifyContent="flex-end">
+        <Button onClick={() => this.setState({ showDrawer: true })}>
+          New Booking
+        </Button>
+        <FormDrawer
+          heading="Booking"
+          isOpen={this.state.showDrawer}
+          onClose={() => this.setState({ showDrawer: false })}
+        >
+          <BookingForm />
+        </FormDrawer>
+      </Flex>
         <Flex flexDirection={"column"}>
           <DateFilter
             onSearchChange={e => {
