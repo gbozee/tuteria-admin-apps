@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+// import firebase from "firebase/app";
 // Required for side-effects
 // import "firebase/firestore";
 
@@ -47,30 +47,9 @@ function appFireBase(keys) {
       );
     },
     loginUser: (email, password) => {
-      return import(`firebase/auth`)
-        .then(() => {
-          return firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(() => {
-              let user = firebase.auth().currentUser;
-              if (user) {
-                return user.getIdToken(/* forceRefresh */ true).then(data => {
-                  return {
-                    token: data,
-                    uid: user.email
-                  };
-                });
-              }
-              return "";
-            })
-            .catch(function(error) {
-              throw error;
-            });
-        })
-        .catch(err => {
-          throw err;
-        });
+      return new Promise((resolve, reject) =>
+        resolve({ token: "102819192819", uid: "james@3xample.com" })
+      );
     },
     getUserToken: token => {
       return new Promise(resolve => resolve("james@example.com"));

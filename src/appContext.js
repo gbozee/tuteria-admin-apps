@@ -444,7 +444,10 @@ const dispatch = (action, existingOptions = {}, firebaseFunc) => {
   };
   return options;
 };
-const componentDidMount = ({ updateState, state }, firebaseFunc) => {
+const componentDidMount = (
+  { updateState, state, getAdapter },
+  firebaseFunc
+) => {
   let { agent = "Biola" } = state.context.state;
   function firebaseAction(key, args) {
     return firebaseFunc.loadFireStore().then(() => firebaseFunc[key](...args));

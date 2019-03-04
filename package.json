@@ -8,17 +8,17 @@
   },
   "main": "src/index.js",
   "dependencies": {
-    "react": "16.6.3",
-    "react-dom": "16.6.3",
-    "react-scripts": "2.0.3",
+    "react": "16.8.3",
+    "react-dom": "16.8.3",
+    "react-scripts": "2.1.5",
     "tuteria-shared": "gbozee/Shared-Admin-Lib"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
-    "@storybook/addon-actions": "^4.1.3",
-    "@storybook/addon-links": "^4.1.3",
-    "@storybook/addons": "^4.1.3",
-    "@storybook/react": "^4.1.3",
+    "@storybook/addon-actions": "4.1.3",
+    "@storybook/addon-links": "4.1.13",
+    "@storybook/addons": "4.1.13",
+    "@storybook/react": "4.1.13",
     "babel-loader": "^8.0.4"
   },
   "scripts": {

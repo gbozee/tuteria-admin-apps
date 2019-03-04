@@ -7,12 +7,12 @@ import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { linkTo } from "@storybook/addon-links";
 import LoginPage from "tuteria-shared/lib/shared/LoginPage";
-import TutorListPage from "../pages/TutorListPage";
+import TutorListPage from "tuteria-shared/lib/pages/TutorListPage";
 import { MemoryRouter as Router, Route } from "react-router";
 import { Link } from "react-router-dom";
 import { Button, Welcome } from "@storybook/react/demo";
-import TutorDetailPage from "../pages/TutorDetailPage";
-import WorkingSection from "../pages/WorkingSection";
+import TutorDetailPage from "tuteria-shared/lib/pages/TutorDetailPage";
+import WorkingSection from "tuteria-shared/lib/pages/WorkingSection";
 import appContext from "../appContext";
 import appFirebase from "../adapters/backupFirebase";
 import devAdapter from "../adapters/dev";
@@ -75,6 +75,7 @@ storiesOf("Tutor Success Application", module)
     <RouterWrapper>
       <Route
         path="/tutor-list"
+        exact
         render={props => (
           <TutorListPage
             {...props}
@@ -82,6 +83,7 @@ storiesOf("Tutor Success Application", module)
           />
         )}
       />
+      <Route path="/tutor-list/:slug" component={TutorDetailPage} />
     </RouterWrapper>
   ))
   .add("Tutor Detail Page", () => (
